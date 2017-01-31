@@ -1,9 +1,4 @@
 package org.milal.parserdaumcafe;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import android.app.Activity;
 import android.graphics.Color;
@@ -11,10 +6,18 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.net.URLEncoder;
+import java.util.ArrayList;
 
 
 public class MainActivity extends Activity {
@@ -33,8 +36,9 @@ public class MainActivity extends Activity {
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
         //리스트뷰에 아답타 연결하기
         listView.setAdapter(adapter);
-        listView.setDivider(new ColorDrawable(Color.YELLOW));
-        listView.setDividerHeight(1); //구분선
+        listView.setDivider(new ColorDrawable(Color.RED));
+        listView.setDividerHeight(3); //구분선
+        listView.setOnItemClickListener(itemClickListenerOfSearchResult);
 
 
 
@@ -59,7 +63,7 @@ public class MainActivity extends Activity {
         //스레드 객체를 생성해서 다운로드 받는다.
         GetJSONThread thread = new GetJSONThread(handler, null, url);
         thread.start();
-    }
+}
 
     //핸들러
     Handler handler = new Handler() {
@@ -86,7 +90,7 @@ public class MainActivity extends Activity {
                             String link = tmp.getString("link");
                             String description = tmp.getString("description");
 
-                            list.add(title+" / "+ link + "/" + description);
+                            list.add(title+"\n"+link+"\n"+description);
                         }
                         //모델의 데이터가 바뀌었다고 아답타 객체에 알린다.
                         adapter.notifyDataSetChanged();
@@ -101,6 +105,19 @@ public class MainActivity extends Activity {
                     break;
 
             }
+        }
+    };
+
+    private AdapterView.OnItemClickListener itemClickListenerOfSearchResult = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View clickedView, int position, long id) {
+            String toastMessage = ((TextView)clickedView).getText().toString()+ " is selected.";
+            Toast.makeText(
+                    getApplicationContext(),
+                    toastMessage,
+                    Toast.LENGTH_SHORT
+            ).show();
+
         }
     };
 }
