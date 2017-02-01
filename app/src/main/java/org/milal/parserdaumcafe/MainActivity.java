@@ -1,10 +1,13 @@
 package org.milal.parserdaumcafe;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -18,6 +21,8 @@ import org.json.JSONObject;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
+
+import static android.R.attr.description;
 
 
 public class MainActivity extends Activity {
@@ -111,13 +116,11 @@ public class MainActivity extends Activity {
     private AdapterView.OnItemClickListener itemClickListenerOfSearchResult = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View clickedView, int position, long id) {
-            String toastMessage = ((TextView)clickedView).getText().toString()+ " is selected.";
-            Toast.makeText(
-                    getApplicationContext(),
-                    toastMessage,
-                    Toast.LENGTH_SHORT
-            ).show();
-
+            String str = ((TextView)clickedView).getText().toString();
+            String cafeLink = str.split("\n")[1];
+            Intent CafePosting = new Intent(Intent.ACTION_VIEW, Uri.parse(cafeLink));
+            // Intent CafePosting = new Intent(getApplicationContext(), ShowCafePosting.class);
+            startActivity(CafePosting);
         }
     };
 }
