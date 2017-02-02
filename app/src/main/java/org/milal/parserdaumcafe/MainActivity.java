@@ -23,6 +23,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import static android.R.attr.description;
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
 
 
 public class MainActivity extends Activity {
@@ -54,17 +55,20 @@ public class MainActivity extends Activity {
         list.clear();
         //요청 url 만들기
         String keyWord = editText.getText().toString();
+        Log.d("keyWord?",keyWord);
         //한글이 깨지지 않게 하기 위해
-        String encodedK = URLEncoder.encode(keyWord, "utf-8");
+        String encodedK = "\""+URLEncoder.encode(keyWord, "utf-8")+"\"+";
+        String defaultOp = "\""+URLEncoder.encode("휠체어","utf-8")+"\"";
+
         StringBuffer buffer = new StringBuffer();
-        buffer.append("http://apis.daum.net/search/cafe?");
+        buffer.append("http://apis.daum.net/search/cafe?result=20&");
         //한글일 경우 인코딩 필요!(영어로 가정한다)
-        buffer.append("q="+encodedK);
-        buffer.append("&apikey=9b6fdd4aa5385f572304fd58317474f8");
+        buffer.append("q="+encodedK+defaultOp);
+        buffer.append("&apikey=d847f0a73b32bb8fa47db90e8d71f7dd");
         buffer.append("&output=json");
 
         String url = buffer.toString();
-
+        Log.d("url?",url);
         //스레드 객체를 생성해서 다운로드 받는다.
         GetJSONThread thread = new GetJSONThread(handler, null, url);
         thread.start();
@@ -85,17 +89,24 @@ public class MainActivity extends Activity {
                         JSONObject jsonObj = new JSONObject(jsonStr);
                         //1.
                         JSONObject channel = jsonObj.getJSONObject("channel");
+                        Log.d("result:", String.valueOf(channel.getString("result")));
+                        Log.d("pageCount:", String.valueOf(channel.getString("pageCount")));
+                        Log.d("totalCount:", String.valueOf(channel.getString("totalCount")));
+
                         //2.
                         JSONArray items = channel.getJSONArray("item");
                         //3.반복문 돌면서 필요한 정보만 얻어온다.
                         for(int i=0 ; i<items.length() ; i++){
+                            Log.d("몇 번째?",String.valueOf(i));
                             //4. 검색결과 값을 얻어온다.
                             JSONObject tmp = items.getJSONObject(i);
+                            String cafeName = tmp.getString("cafeName");
+
+                            if(!(cafeName.equalsIgnoreCase("휠체어배낭여행(장애인여행)")||cafeName.equalsIgnoreCase("휠체어로 세계로...")))
+                                continue;
                             String title = tmp.getString("title");
                             String link = tmp.getString("link");
-                            String description = tmp.getString("description");
-
-                            list.add(title+"\n"+link+"\n"+description);
+                            list.add(title + "\n" + link + "\n" + cafeName);
                         }
                         //모델의 데이터가 바뀌었다고 아답타 객체에 알린다.
                         adapter.notifyDataSetChanged();

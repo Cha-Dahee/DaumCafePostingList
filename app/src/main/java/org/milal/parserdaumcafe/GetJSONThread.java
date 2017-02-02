@@ -33,18 +33,18 @@ public class GetJSONThread extends Thread{
         try {
             URL url=new URL(this.url);
             conn= (HttpURLConnection)url.openConnection();
-            if(conn != null){//정상접속이 되었다면
-                conn.setConnectTimeout(10000);//최대 대기시간10초
-                conn.setUseCaches(false);//캐쉬사용안함
-                if(conn.getResponseCode()==HttpURLConnection.HTTP_OK){
-                    //InputStreamReader 객체 얻어오기
-                    InputStreamReader isr=
-                            new InputStreamReader(conn.getInputStream());
-                    BufferedReader br=new BufferedReader(isr);
-                    //반복문 돌면서 읽어오기
-                    while(true){
-                        String line=br.readLine();
-                        if(line==null)break;
+                        if(conn != null){//정상접속이 되었다면
+                            conn.setConnectTimeout(10000);//최대 대기시간10초
+                            conn.setUseCaches(false);//캐쉬사용안함
+                            if(conn.getResponseCode()==HttpURLConnection.HTTP_OK){
+                                //InputStreamReader 객체 얻어오기
+                                InputStreamReader isr=
+                                        new InputStreamReader(conn.getInputStream());
+                                BufferedReader br=new BufferedReader(isr);
+                                //반복문 돌면서 읽어오기
+                                while(true){
+                                    String line=br.readLine();
+                                    if(line==null)break;
                         //읽어온 문자열을 객체에 저장
                         builder.append(line);
                     }
